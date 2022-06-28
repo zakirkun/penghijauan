@@ -1,0 +1,72 @@
+name: Commit Now
+
+on:
+  workflow_dispatch:
+    inputs:
+      email:
+        description: 'EMail'
+        required: true
+        default: 'coderzakir44@gmail.com'
+      username:
+        description: 'Username'
+        required: true
+        default: 'Coder Zakir'
+      commit:
+        description: 'Commit'
+        required: true
+        default: 'Penghijauan'
+      limit:
+        description: 'Limit Commit'
+        required: true
+        default: 20
+  push:
+    branches:
+      - master
+
+jobs:
+  auto_commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2      
+        with:
+         persist-credentials: false
+         fetch-depth: 0
+      
+      - name: Set Config
+        run: |
+          git config --local user.email "${{ github.event.inputs.email }}"
+          git config --local user.name "${{ github.event.inputs.username }}"
+          git add -A
+          
+          arr[0]="chore(bot): 😂 auto commit"
+          arr[1]="chore(bot): 😱 auto commit"
+          arr[2]="chore(bot): 👿 auto commit"
+          arr[3]="chore(bot): 💩 auto commit"
+          arr[4]="chore(bot): 🙏 auto commit"
+          arr[5]="chore(bot): 🙈 auto commit"
+          arr[6]="chore(bot): 🐐 auto commit"
+          arr[7]="chore(bot): 🤖 auto commit"
+          arr[8]="chore(bot): 🟩 auto commit"
+          arr[9]="chore(bot): 👻 auto commit"
+          
+          rand=$[$RANDOM % ${#arr[@]}]
+          
+          git commit -m "${arr[$rand]}"
+
+      - name: DO It
+        run: |
+          for i in {0..${{ github.event.inputs.limit }}}
+          do
+            cat > LAST_UPDATED
+            d=$i+`date '+%Y-%m-%dT%H:%M:%SZ'`
+            echo $d > LAST_UPDATED
+            git add -A
+            git commit -m "${{ github.event.inputs.commit }}"
+          done
+          
+      - name: GitHub Push
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          force: true
+          directory: "."
+          github_token: ${{ secrets.GITHUB_TOKEN }}
